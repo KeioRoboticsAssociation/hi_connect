@@ -21,6 +21,7 @@ import serial
 import struct
 import math
 import serial.tools.list_ports
+import math
 
 
 class Connect(Node):
@@ -31,15 +32,15 @@ class Connect(Node):
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
         self.deg = [0, 0]
-        self.tmr = self.create_timer(0.1, self.callback)
+        self.tmr = self.create_timer(0.00001, self.callback)
 
     def send(self):
         message = str(self.deg[0])+','+str(self.deg[1])+'\n'
         self.uart.write(message.encode('ascii'))
 
     def deg_callback(self, deg_msg):
-        self.deg[0] = deg_msg.data[0]
-        self.deg[1] = deg_msg.data[1]
+        self.deg[0] = math.floor(deg_msg.data[0]*100)/100
+        self.deg[1] = math.floor(deg_msg.data[1]*100)/100
 
     def receive(self):
         line = self.uart.readline()
