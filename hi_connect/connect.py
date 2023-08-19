@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-from cmath import pi
-from email.header import Header
-from shutil import move
-from time import struct_time
 import rclpy
 from rclpy.node import Node
 from typing import List
@@ -16,12 +12,9 @@ from std_msgs.msg import Int8
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 from std_msgs.msg import Header
-# from cobs import cobs
 import serial
-import struct
 import math
 import serial.tools.list_ports
-import math
 
 
 class Connect(Node):
@@ -49,7 +42,7 @@ class Connect(Node):
     def callback(self):
         self.send()
         self.receive()
-        print(self.readdata)
+        print(self.readdata,end='')
 
 
 def main():
