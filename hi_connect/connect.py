@@ -11,17 +11,18 @@ import serial.tools.list_ports
 class Connect(Node):
     def __init__(self):
         super().__init__('connect')
-        self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 10)
+        self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 100)
         self.port = serial.tools.list_ports.comports()[0].device
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
         self.deg = [0, 0]
         self.stepper = 0
-        self.tmr = self.create_timer(0.00001, self.callback)
+        self.tmr = self.create_timer(0.001, self.callback)
 
     def send(self):
-        message = str(self.deg[0])+','+str(self.deg[1])+str(self.stepper)+'\n'
+        message = str(int(self.stepper)+3)+' '+str(self.deg[0])+' '+str(self.deg[1])+'\n'
         self.uart.write(message.encode('ascii'))
+        # print(message)
 
     def deg_callback(self, deg_msg):
         self.deg[0] = math.floor(deg_msg.r*100)/100
