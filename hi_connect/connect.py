@@ -35,6 +35,7 @@ class Connect(Node):
         self.stepper = deg_msg.stepper
         self.hand = 1 if deg_msg.hand == 45 else 0
         self.armtheta = int(deg_msg.armtheta)
+        self.catch = deg_msg.judge
 
     def catch_callback(self, catch_msg):
         self.catch = catch_msg.data
