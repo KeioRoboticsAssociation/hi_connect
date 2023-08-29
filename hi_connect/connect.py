@@ -20,12 +20,13 @@ class Connect(Node):
         self.deg = [0, 0]
         self.stepper = 0
         self.hand = 0
+        self.armtheta = 0
         self.catch = False
         self.tmr = self.create_timer(0.001, self.callback)
         self.uart.write("s\n".encode('ascii'))
 
     def send(self):
-        message = str(int(self.stepper))+' '+str(int(self.catch))+' '+str(self.hand)+' '+str(self.deg[0])+' '+str(self.deg[1])+'\n'
+        message = str(int(self.stepper))+' '+str(int(self.catch))+' '+str(self.hand)+' '+str(self.armtheta)+' '+str(self.deg[0])+' '+str(self.deg[1])+'\n'
         self.uart.write(message.encode('ascii'))
 
     def deg_callback(self, deg_msg):
@@ -33,6 +34,7 @@ class Connect(Node):
         self.deg[1] = math.floor(deg_msg.r*100)/100
         self.stepper = deg_msg.stepper
         self.hand = 1 if deg_msg.hand == 45 else 0
+        self.armtheta = int(deg_msg.armtheta)
 
     def catch_callback(self, catch_msg):
         self.catch = catch_msg.data
