@@ -33,7 +33,7 @@ class Connect(Node):
         self.deg[0] = math.floor(deg_msg.theta*100)/100
         self.deg[1] = math.floor(deg_msg.r*100)/100
         self.stepper = deg_msg.stepper
-        self.hand = 1 if deg_msg.hand == 45 else 0
+        self.hand = 1 if (deg_msg.hand == 45 or deg_msg.hand == -45) else 0
         self.armtheta = int(deg_msg.armtheta)
         self.catch = deg_msg.judge
 
