@@ -13,7 +13,7 @@ class Connect(Node):
     def __init__(self):
         super().__init__('connect')
         self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 100)
-        self.subscription = self.create_subscription(Bool, 'catch_data', self.catch_callback, 100)
+        self.publisher = self.create_publisher(CreateMessage, 'real_pos', 100)
         self.port = serial.tools.list_ports.comports()[0].device
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
@@ -43,6 +43,13 @@ class Connect(Node):
     def receive(self):
         line = self.uart.readline()
         self.readdata = line.decode('utf-8')
+        real_pos = CreateMessage()
+        try:
+            real_pos.theta = float(self.readdata.split(',')[0])
+            real_pos.r = float(self.readdata.split(',')[1])
+        except:
+            pass
+        self.publisher.publish(real_pos)
 
     def callback(self):
         self.send()
