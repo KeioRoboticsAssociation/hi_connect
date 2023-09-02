@@ -7,6 +7,7 @@ from std_msgs.msg import Bool
 import serial
 import math
 import serial.tools.list_ports
+import time
 
 
 class Connect(Node):
@@ -17,6 +18,9 @@ class Connect(Node):
         self.get_logger().info("SIMULATION MODE")
         self.get_logger().info("s")
         self.get_logger().info("homing")
+        
+        time.sleep(2)
+        
         # self.port = serial.tools.list_ports.comports()[0].device
         # print(self.port)
         # self.uart = serial.Serial(self.port, 115200)
