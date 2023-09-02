@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'connect = hi_connect.connect:main',
+            'connect_sim = hi_connect.connect_sim:main',
         ],
     },
 )
