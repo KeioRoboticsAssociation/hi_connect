@@ -47,6 +47,7 @@ class Connect(Node):
         try:
             real_pos.theta = float(self.readdata.split(',')[0])
             real_pos.r = float(self.readdata.split(',')[1])
+            real_pos.stepper = int(self.readdata.split(',')[2])
         except:
             pass
         self.publisher.publish(real_pos)
