@@ -14,6 +14,7 @@ class Connect(Node):
         super().__init__('connect')
         self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 100)
         self.publisher = self.create_publisher(CreateMessage, 'real_pos', 100)
+        self.emg = self.create_subscription(Bool, 'emergency', self.catch_callback, 100)
         self.port = serial.tools.list_ports.comports()[0].device
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
@@ -37,8 +38,11 @@ class Connect(Node):
         self.armtheta = int(deg_msg.armtheta)
         self.catch = deg_msg.judge
 
-    def catch_callback(self, catch_msg):
-        self.catch = catch_msg.data
+    def emg_callback(self, emg_msg):
+        if emg_msg.data:
+            self.__del__()
+            exit()
+        return
 
     def receive(self):
         line = self.uart.readline()
