@@ -40,6 +40,7 @@ class Connect(Node):
 
     def emg_callback(self, emg_msg):
         if emg_msg.data:
+            self.get_logger().info('RECEIVED EMERGENCY')
             self.__del__()
             exit()
         return
