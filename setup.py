@@ -22,6 +22,8 @@ setup(
         'console_scripts': [
             'connect = hi_connect.connect:main',
             'connect_sim = hi_connect.connect_sim:main',
+            'connect_seiton = hi_connect.connect_seiton:main',
+            'connect_em = hi_connect.connect_em:main',
         ],
     },
 )
