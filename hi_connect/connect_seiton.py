@@ -18,7 +18,7 @@ class Connect(Node):
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
         self.tmr = self.create_timer(0.001, self.callback)
-        # self.uart.write("s\n".encode('ascii'))
+        self.uart.write("s\n".encode('ascii'))
         self.pos = 0
         self.prev = 0
 
@@ -46,7 +46,7 @@ class Connect(Node):
 
     def callback(self):
         self.send()
-        self.receive()
+        # self.receive()
         # self.get_logger().info(str(self.pos))
         pass
 

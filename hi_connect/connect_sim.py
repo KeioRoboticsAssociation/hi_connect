@@ -48,7 +48,7 @@ class Connect(Node):
         #     self.cnt=0
         self.hand = 1 if (deg_msg.hand == 45 or deg_msg.hand == -45) else 0
         self.armtheta = int(deg_msg.armtheta)
-        self.catch = deg_msg.judge
+        self.catch = deg_msg.hand_state[0]<<2 | deg_msg.hand_state[1]<<1 | deg_msg.hand_state[2]
         # self.cnt+=1
 
     def catch_callback(self, catch_msg):

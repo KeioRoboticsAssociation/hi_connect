@@ -14,11 +14,12 @@ class Connect(Node):
         super().__init__('connect')
         self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 100)
         self.publisher = self.create_publisher(CreateMessage, 'real_pos', 100)
-        self.emg = self.create_subscription(Bool, 'emergency', self.emg_callback, 100)
+        self.emg = self.create_subscription(Bool, 'emergency', self.emg_callback, 10)
+        self.stp_homing = self.create_subscription(Bool, 'stp_homing', self.stp_homing_callback, 10)
         # self.port = serial.tools.list_ports.comports()[0].device
         self.port = '/dev/main'
         print(self.port)
-        self.uart = serial.Serial(self.port, 115200)
+        self.uart = serial.Serial(self.port, 115200,timeout=0.5)
         self.deg = [0, 0]
         self.stepper = 0
         self.hand = 0
@@ -37,7 +38,14 @@ class Connect(Node):
         self.stepper = deg_msg.stepper
         self.hand = 1 if (deg_msg.hand == 45 or deg_msg.hand == -45) else 0
         self.armtheta = int(deg_msg.armtheta)
-        self.catch = deg_msg.judge
+        # self.catch = deg_msg.judge
+        self.catch = deg_msg.hand_state[0]<<2 | deg_msg.hand_state[1]<<1 | deg_msg.hand_state[2]
+    
+    def stp_homing_callback(self, stp_homing_msg):
+        if stp_homing_msg.data:
+            self.stepper = 8
+            self.send()
+        return
 
     def emg_callback(self, emg_msg):
         if emg_msg.data:
@@ -48,15 +56,18 @@ class Connect(Node):
 
     def receive(self):
         line = self.uart.readline()
-        self.readdata = line.decode('utf-8')
-        real_pos = CreateMessage()
-        try:
-            real_pos.theta = float(self.readdata.split(',')[0])
-            real_pos.r = float(self.readdata.split(',')[1])
-            real_pos.stepper = int(self.readdata.split(',')[2])
-        except:
-            pass
-        self.publisher.publish(real_pos)
+        if line:
+            self.readdata = line.decode('utf-8')
+            real_pos = CreateMessage()
+            try:
+                real_pos.theta = float(self.readdata.split(',')[0])
+                real_pos.r = float(self.readdata.split(',')[1])
+                real_pos.stepper = int(self.readdata.split(',')[2])
+            except:
+                return
+            self.publisher.publish(real_pos)
+        else:
+            return
 
     def callback(self):
         self.send()
