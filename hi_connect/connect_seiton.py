@@ -13,7 +13,8 @@ class Connect(Node):
     def __init__(self):
         super().__init__('connect_seiton')
         self.subscription = self.create_subscription(Joy, 'joy', self.joy_callback, 100)
-        self.port = serial.tools.list_ports.comports()[1].device
+        # self.port = serial.tools.list_ports.comports()[1].device
+        self.port = '/dev/seiton'
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
         self.tmr = self.create_timer(0.001, self.callback)

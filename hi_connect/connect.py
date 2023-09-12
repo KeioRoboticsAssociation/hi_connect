@@ -15,7 +15,8 @@ class Connect(Node):
         self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 100)
         self.publisher = self.create_publisher(CreateMessage, 'real_pos', 100)
         self.emg = self.create_subscription(Bool, 'emergency', self.emg_callback, 100)
-        self.port = serial.tools.list_ports.comports()[0].device
+        # self.port = serial.tools.list_ports.comports()[0].device
+        self.port = '/dev/main'
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
         self.deg = [0, 0]
