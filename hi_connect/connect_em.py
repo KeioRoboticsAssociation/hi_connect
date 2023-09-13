@@ -14,7 +14,7 @@ class Connect(Node):
         super().__init__('connect_em')
         
         # self.port = serial.tools.list_ports.comports()[0].device
-        self.port = '/dev/emergency'
+        self.port = '/dev/ttyUSB0'
         self.publisher = self.create_publisher(Bool,'emergency', 100)
         print(self.port)
         self.uart = serial.Serial(self.port, 115200)
