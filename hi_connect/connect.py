@@ -18,7 +18,7 @@ class Connect(Node):
         self.emg = self.create_subscription(Bool, 'emergency', self.emg_callback, 10)
         self.stp_homing = self.create_subscription(Bool, 'stp_homing', self.stp_homing_callback, 10)
         # self.port = serial.tools.list_ports.comports()[0].device
-        self.port = '/dev/ttyACM0'
+        self.port = '/dev/main'
         print(self.port)
         self.uart = serial.Serial(self.port, 115200,timeout=0.5)
         self.deg = [0, 0]
