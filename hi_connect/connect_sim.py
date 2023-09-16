@@ -14,6 +14,7 @@ class Connect(Node):
     def __init__(self):
         super().__init__('connect')
         self.subscription = self.create_subscription(CreateMessage, 'degpos_data', self.deg_callback, 100)
+        self.comTopicPublisher = self.create_subscription(Bool, 'connect', self.comTopic_callback, 100)
         self.publisher = self.create_publisher(CreateMessage, 'real_pos', 100)
         self.get_logger().info("SIMULATION MODE")
         self.get_logger().info("s")
@@ -32,12 +33,18 @@ class Connect(Node):
         self.catch = False
         self.tmr = self.create_timer(0.05, self.callback)
         self.cnt=0
+        self.com = False
         # self.uart.write("s\n".encode('ascii'))
+        
+    def comTopic_callback(self, comTopic_msg):
+        self.uart.write("s\n".encode('ascii'))
+        self.com = comTopic_msg.data
 
     def send(self):
         message = str(int(self.stepper))+' '+str(int(self.catch))+' '+str(self.hand) + \
             ' '+str(self.armtheta)+' '+str(self.deg[0])+' '+str(self.deg[1])+'\n'
         # self.uart.write(message.encode('ascii'))
+
 
     def deg_callback(self, deg_msg):
         self.deg[0] = math.floor(deg_msg.theta*100)/100
@@ -81,9 +88,10 @@ class Connect(Node):
         self.publisher.publish(real_pos)
 
     def callback(self):
-        self.send()
-        self.receive()
-        self.get_logger().info(self.readdata[:-1])
+        if(self.com):
+            self.send()
+            self.receive()
+            self.get_logger().info(self.readdata[:-1])
 
     def __del__(self):
         pass
