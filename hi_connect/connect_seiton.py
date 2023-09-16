@@ -16,15 +16,17 @@ class Connect(Node):
         self.comTopicPublisher = self.create_subscription(Bool, 'connect', self.comTopic_callback, 100)
         self.publisher = self.create_publisher(Bool, 'emergency', 100)
         # self.port = serial.tools.list_ports.comports()[1].device
-        self.port = '/dev/seiton'
-        # self.port = '/dev/ttyACM7'
+        # self.port = '/dev/seiton'
+        self.port = '/dev/ttyACM0'
         print(self.port)
         self.uart = serial.Serial(self.port, 115200,write_timeout=2)
         self.tmr = self.create_timer(0.01, self.callback)
         self.pos = 0
         self.prev = 0
-        self.flag = False
-        self.g_flag = False
+        self.lt_flag = False
+        self.rt_flag = False
+        self.lb_flag = False
+        self.rb_flag = False
         self.com = False
     
     
@@ -33,7 +35,7 @@ class Connect(Node):
         self.com = comTopic_msg.data
 
     def joy_callback(self, joy_msg):
-        self.get_logger().info('callback')
+        # self.get_logger().info('callback')
         # if joy_msg.axes[6] == -1: # right
         #     self.pos = 0
         # elif joy_msg.axes[6] == 1: # left
@@ -50,19 +52,40 @@ class Connect(Node):
             self.pos = 0
         elif joy_msg.axes[7] == -1: # down
             self.pos = 2
-        elif joy_msg.axes[2] < 0.5:
+        elif joy_msg.axes[2] < 0.5: # LT
             self.pos = 4
-            self.flag = True
-        elif joy_msg.axes[2] == 1 and self.flag:
+            self.lt_flag = True
+        elif joy_msg.axes[2] == 1 and self.lt_flag:    # LT release
             self.pos = 7
-            self.flag =False
-        elif joy_msg.axes[5] < 0.5:
+            self.lt_flag =False
+        elif joy_msg.axes[5] < 0.5: # RT
             self.pos = 5
-            self.g_flag = True
-        elif joy_msg.axes[5] == 1 and self.g_flag:
+            self.rt_flag = True
+        elif joy_msg.axes[5] == 1 and self.rt_flag:  # RT release
             self.pos = 6
-            self.g_flag = False
+            self.rt_flag = False
+            
+        elif joy_msg.buttons[4]==1:
+            self.pos = 8
+            self.lb_flag = True
+            
+        elif joy_msg.buttons[4]==0 and self.lb_flag:
+            self.pos = 9
+            self.lb_flag = False
+            
+        elif joy_msg.buttons[5]==1:
+            self.pos = 10
+            self.rb_flag = True
+            
+        elif joy_msg.buttons[5]==0 and self.rb_flag:
+            self.pos = 11
+            self.rb_flag = False
+        
+        elif joy_msg.buttons[5]:
+            self.pos = 8
+        
         if joy_msg.buttons[8]:
+            
             msg = Bool()
             msg.data = True
             self.publisher.publish(msg)
@@ -74,7 +97,7 @@ class Connect(Node):
             self.get_logger().info('Sent: '+str(self.pos))
             self.uart.write(message.encode('ascii'))
             self.get_logger().info('fin')
-            self.flag = False
+            self.lt_flag = False
         self.prev = self.pos
 
     def receive(self):
