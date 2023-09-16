@@ -16,8 +16,8 @@ class Connect(Node):
         self.comTopicPublisher = self.create_subscription(Bool, 'connect', self.comTopic_callback, 100)
         self.publisher = self.create_publisher(Bool, 'emergency', 100)
         # self.port = serial.tools.list_ports.comports()[1].device
-        # self.port = '/dev/seiton'
-        self.port = '/dev/ttyACM0'
+        self.port = '/dev/seiton'
+        # self.port = '/dev/ttyACM0'
         print(self.port)
         self.uart = serial.Serial(self.port, 115200,write_timeout=2)
         self.tmr = self.create_timer(0.01, self.callback)
