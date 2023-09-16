@@ -33,7 +33,7 @@ class Connect(Node):
         self.catch = False
         self.tmr = self.create_timer(0.05, self.callback)
         self.cnt=0
-        self.com = False
+        self.com = True
         # self.uart.write("s\n".encode('ascii'))
         
     def comTopic_callback(self, comTopic_msg):
