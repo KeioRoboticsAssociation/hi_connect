@@ -13,13 +13,14 @@ class Connect(Node):
     def __init__(self):
         super().__init__('connect_seiton')
         self.subscription = self.create_subscription(Joy, 'joy', self.joy_callback, 100)
+        self.seiton_subscription = self.create_subscription(Bool, 'seiton', self.seiton_callback, 100)
         self.comTopicPublisher = self.create_subscription(Bool, 'connect', self.comTopic_callback, 100)
         self.publisher = self.create_publisher(Bool, 'emergency', 100)
         # self.port = serial.tools.list_ports.comports()[1].device
         self.port = '/dev/seiton'
         # self.port = '/dev/ttyACM0'
         print(self.port)
-        self.uart = serial.Serial(self.port, 115200,write_timeout=2)
+        self.uart = serial.Serial(self.port, 115200, write_timeout=2)
         self.tmr = self.create_timer(0.01, self.callback)
         self.pos = 0
         self.prev = 0
@@ -34,6 +35,9 @@ class Connect(Node):
         self.uart.write("s\n".encode('ascii'))
         self.com = comTopic_msg.data
 
+    def seiton_callback(self, msg):
+        self.pos = msg.data
+    
     def joy_callback(self, joy_msg):
         # self.get_logger().info('callback')
         # if joy_msg.axes[6] == -1: # right
@@ -85,7 +89,6 @@ class Connect(Node):
             self.pos = 8
         
         if joy_msg.buttons[8]:
-            
             msg = Bool()
             msg.data = True
             self.publisher.publish(msg)
