@@ -4,6 +4,7 @@ from rclpy.node import Node
 from typing import List
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Bool
+from std_msgs.msg import Int8
 import serial
 import math
 import serial.tools.list_ports
@@ -12,8 +13,8 @@ import serial.tools.list_ports
 class Connect(Node):
     def __init__(self):
         super().__init__('connect_seiton')
-        self.subscription = self.create_subscription(Joy, 'joy', self.joy_callback, 100)
-        self.seiton_subscription = self.create_subscription(Bool, 'seiton', self.seiton_callback, 100)
+        # self.subscription = self.create_subscription(Joy, 'joy', self.joy_callback, 100)
+        self.seiton_subscription = self.create_subscription(Int8, 'seiton', self.seiton_callback, 100)
         self.comTopicPublisher = self.create_subscription(Bool, 'connect', self.comTopic_callback, 100)
         self.publisher = self.create_publisher(Bool, 'emergency', 100)
         # self.port = serial.tools.list_ports.comports()[1].device
